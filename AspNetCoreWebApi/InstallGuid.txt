@@ -1,0 +1,13 @@
+﻿//nuget
+dotnet add package Microsoft.AspNetCore.Identity.EntityFrameworkCore --version 8.0.11
+dotnet add package Microsoft.AspNetCore.Authentication.JwtBearer --version 8.0.11
+dotnet add package Microsoft.EntityFrameworkCore.SqlServer
+dotnet add package Microsoft.EntityFrameworkCore.Tools
+
+//inne
+dotnet tool install --global dotnet-ef
+
+//b.danych
+dotnet ef migrations add InitialCreate
+dotnet ef database update
+
