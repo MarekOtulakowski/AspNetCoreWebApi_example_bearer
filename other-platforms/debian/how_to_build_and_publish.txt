@@ -1,0 +1,32 @@
+first
+install docker-desktop on developer machine
+https://www.docker.com/products/docker-desktop/
+
+second (build and move to host)
+cd ścieżka/do/twojego/projektu
+docker build -t aspnetcorewebapi:latest .
+docker save -o aspnetcorewebapi.tar aspnetcorewebapi:latest
+
+move file aspnetcorewebapi.tar to Debian via WinSCP, example to /home/user.
+
+log to debian host, from windows logg using Putty https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html
+ssh user@ip_debian_address
+
+install docker (if doesn't exists)
+sudo apt update
+sudo apt install -y ca-certificates curl gnupg
+sudo mkdir -p /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo apt update
+sudo apt install -y docker-ce docker-ce-cli containerd.io
+
+cd /home/user
+sudo docker load < aspnetcorewebapi.tar
+sudo docker run -d -p 8080:8080 -p 8081:8081 aspnetcorewebapi:latest
+
+verification
+sudo docker ps
+http://ip_debian_address:8080
+
+
