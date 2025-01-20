@@ -72,11 +72,13 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
-if (true) //app.Environment.IsDevelopment())
-{
+//if (app.Environment.IsDevelopment() &&
+//    (app.Configuration["ASPNETCORE_URLS"]?.Contains("127.0.0.1") == true ||
+//    app.Configuration["ASPNETCORE_URLS"]?.Contains("localhost") == true)
+//{
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+//}
 
 app.UseRouting();
 

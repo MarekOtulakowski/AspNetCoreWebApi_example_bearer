@@ -1,18 +1,4 @@
-first
-install docker-desktop on developer machine
-https://www.docker.com/products/docker-desktop/
-
-second (build and move to host)
-cd ścieżka/do/twojego/projektu
-docker build -t aspnetcorewebapi:latest .
-docker save -o aspnetcorewebapi.tar aspnetcorewebapi:latest
-
-move file aspnetcorewebapi.tar to Debian via WinSCP, example to /home/user.
-
-log to debian host, from windows logg using Putty https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html
-ssh user@ip_debian_address
-
-install docker (if doesn't exists)
+first (on debian host install docker engine, install docker (if doesn't exists)
 sudo apt update
 sudo apt install -y ca-certificates curl gnupg
 sudo mkdir -p /etc/apt/keyrings
@@ -21,12 +7,29 @@ echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.
 sudo apt update
 sudo apt install -y docker-ce docker-ce-cli containerd.io
 
+second (on debian, build output docker file)
+cd ścieżka/do/twojego/projektu
+sudo docker build -t aspnetcorewebapi:latest .
+sudo docker save -o aspnetcorewebapi.tar aspnetcorewebapi:latest
+sudo chmod 777 aspnetcorewebapi.tar
+
+third (move tar file to production debian)
+move file aspnetcorewebapi.tar to Debian using ssh via putty or winscp on windows
+
+fourth (on production server)
 cd /home/user
 sudo docker load < aspnetcorewebapi.tar
-sudo docker run -d -p 8080:8080 -p 8081:8081 aspnetcorewebapi:latest
+sudo docker run -d -p 8080:8080 -p 8081:8081 -v /etc/ssl:/etc/ssl:ro aspnetcorewebapi:latest
+(default  location where docker is installed /var/lib/docker)
 
-verification
+sixth (verification)
 sudo docker ps
 http://ip_debian_address:8080
 
 
+//bellow not tested fully, curentaly not work
+//on https 8081 currently doesn't work yet on remote host
+fifth (https, generate self signed cert on debian - if doesn't exist or use existing certificate on production server - recommend)
+openssl genrsa -out aspnetcorewebapi.key 2048
+openssl req -x509 -new -nodes -key aspnetcorewebapi.key -sha256 -days 365 -out aspnetcorewebapi.crt -subj "/CN=localhost"
+openssl pkcs12 -export -out aspnetcorewebapi.pfx -inkey aspnetcorewebapi.key -in aspnetcorewebapi.crt -password pass:Example5%Password

@@ -1,3 +1,5 @@
+# Docker for linux - debian
+
 # Stage 1: Base image with ASP.NET Core runtime
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
