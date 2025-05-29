@@ -33,3 +33,7 @@ fifth (https, generate self signed cert on debian - if doesn't exist or use exis
 openssl genrsa -out aspnetcorewebapi.key 2048
 openssl req -x509 -new -nodes -key aspnetcorewebapi.key -sha256 -days 365 -out aspnetcorewebapi.crt -subj "/CN=localhost"
 openssl pkcs12 -export -out aspnetcorewebapi.pfx -inkey aspnetcorewebapi.key -in aspnetcorewebapi.crt -password pass:Example5%Password
+
+//lazydocker tools to work in docker (optional)
+source /root/.bashrc
+
