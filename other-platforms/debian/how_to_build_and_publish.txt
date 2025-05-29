@@ -35,5 +35,17 @@ openssl req -x509 -new -nodes -key aspnetcorewebapi.key -sha256 -days 365 -out a
 openssl pkcs12 -export -out aspnetcorewebapi.pfx -inkey aspnetcorewebapi.key -in aspnetcorewebapi.crt -password pass:Example5%Password
 
 //lazydocker tools to work in docker (optional)
+//lazy docker
+su -
+(log on as root)
+curl https://raw.githubusercontent.com/jesseduffield/lazydocker/master/scripts/install_update_linux.sh | bash
+
+nano /root/.bashrc
+export PATH="$HOME/.local/bin:$PATH"
+(ctrl+o
+ctrl+x)
+
 source /root/.bashrc
+
+lazydocker
 
