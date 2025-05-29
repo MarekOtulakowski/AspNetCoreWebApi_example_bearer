@@ -49,3 +49,48 @@ source /root/.bashrc
 
 lazydocker
 
+//seq (optional log)
+mkdir -p /opt/seq
+apt install nginx -y
+docker stop seq && docker rm seq
+docker run -d   --name seq   -e ACCEPT_EULA=Y   -p 127.0.0.1:5341:80   -v /opt/seq:/data   datalust/seq:latest
+nano /etc/nginx/sites-available/seq
+
+server {
+    listen 443 ssl;
+    server_name my-lan-ip;
+
+    ssl_certificate     /etc/nginx/ssl/seq.crt;
+    ssl_certificate_key /etc/nginx/ssl/seq.key;
+
+    location / {
+        proxy_pass http://127.0.0.1:5341;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+
+server {
+    listen 80;
+    server_name my-lan-ip;
+
+    return 301 https://$host$request_uri;
+}
+
+(ctrl+o
+ctrl+x)
+
+   55  ln -s /etc/nginx/sites-available/seq /etc/nginx/sites-enabled/
+   63  mkdir -p /etc/nginx/ssl
+   64  openssl req -x509 -nodes -days 3650 -newkey rsa:2048   -keyout /etc/nginx/ssl/seq.key   -out /etc/nginx/ssl/seq.crt   -subj "/C=PL/ST=State/L=City/O=MyCompany/OU=IT/CN=my-lan-ip"
+67  nginx -t && systemctl reload nginx
+   68  rm /etc/nginx/sites-enabled/default
+   69  nginx -t && systemctl reload nginx
+
+(autostart after restart)
+systemctl enable docker
+systemctl status docker
+docker update --restart unless-stopped seq
+
